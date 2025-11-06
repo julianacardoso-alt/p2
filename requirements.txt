@@ -1,4 +1,6 @@
-pandas
+  url=https://github.com/julianacardoso-alt/p2/blob/main/requirements.txt
 streamlit
-pypdf
-matplotlib
+pandas
+altair
+pdfplumber
+PyPDF2
