@@ -1,12 +1,10 @@
+import panda as pd
 import streamlit as st
-import perfil1.pdf
-import re
 import matplotlib.pyplot as plt
 
-st.title('Perfil dos Advogados - Página 34')
+st.title('Perfil dos Advogados')
 
-# Permite o upload do PDF pela interface do Streamlit
-pdf_file = st.file_uploader('Escolha o PDF do perfil', type='pdf')
+dataset = pd.read_csv ('perfil1.pdf')
 
 if pdf_file is not None:
     reader = PyPDF2.PdfReader(pdf_file)
