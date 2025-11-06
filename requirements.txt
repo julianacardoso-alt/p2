@@ -1,6 +1,5 @@
-  url=https://github.com/julianacardoso-alt/p2/blob/main/requirements.txt
+ url=https://github.com/julianacardoso-alt/p2/blob/main/requirements.txt
 streamlit
 pandas
 altair
-pdfplumber
 PyPDF2
