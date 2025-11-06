@@ -1,4 +1,3 @@
- url=https://github.com/julianacardoso-alt/p2/blob/main/perfil.py
 import os
 import re
 import streamlit as st
@@ -26,6 +25,7 @@ try:
     from PyPDF2 import PdfReader
 except Exception:
     PdfReader = None
+
 
 def extract_text_from_pdf(path):
     """Tenta extrair texto com pdfplumber, em seguida PyPDF2. Retorna string com todo o texto."""
@@ -61,39 +61,44 @@ def extract_text_from_pdf(path):
     # Se chegar aqui, nada funcionou
     return ""
 
+
 def split_profiles(text):
-    text = re.sub(r'\r\n?', '\n', text)
-    parts = re.split(r'(?:\n{2,}|Nome:|Perfil|Advogado[a]?:)', text, flags=re.IGNORECASE)
+    text = re.sub(r'\r\n?', '\\n', text)
+    parts = re.split(r'(?:\\n{2,}|Nome:|Perfil|Advogado[a]?:)', text, flags=re.IGNORECASE)
     parts = [p.strip() for p in parts if p.strip() and len(p.strip()) > 10]
     return parts
 
+
 def detect_gender(chunk):
     lower = chunk.lower()
-    if re.search(r'\b(sexo[:\s]*feminino|feminino|mulher|advogada)\b', lower):
+    if re.search(r'\\b(sexo[:\\s]*feminino|feminino|mulher|advogada)\\b', lower):
         return "Feminino"
-    if re.search(r'\b(sexo[:\s]*masculino|masculino|homem|advogado)\b', lower):
+    if re.search(r'\\b(sexo[:\\s]*masculino|masculino|homem|advogado)\\b', lower):
         return "Masculino"
-    if re.search(r'\bmulher\b', lower):
+    if re.search(r'\\bmulher\\b', lower):
         return "Feminino"
-    if re.search(r'\bhomem\b', lower):
+    if re.search(r'\\bhomem\\b', lower):
         return "Masculino"
     return None
+
 
 def detect_children(chunk):
     lower = chunk.lower()
-    if re.search(r'\b(sem filhos|não tem filhos|nao tem filhos|não possui filhos|nao possui filhos|filhos[:\s]*0)\b', lower):
+    if re.search(r'\\b(sem filhos|não tem filhos|nao tem filhos|não possui filhos|nao possui filhos|filhos[:\\s]*0)\\b', lower):
         return "Não"
-    if re.search(r'\b(tem filhos|filho|filhos|filhos[:\s]*sim|filhos[:\s]*s)\b', lower):
+    if re.search(r'\\b(tem filhos|filho|filhos|filhos[:\\s]*sim|filhos[:\\s]*s)\\b', lower):
         return "Sim"
     return None
 
+
 def fallback_counts(text):
     lower = text.lower()
-    masculino = len(re.findall(r'\b(masculino|homem|advogado)\b', lower))
-    feminino = len(re.findall(r'\b(feminino|mulher|advogada)\b', lower))
-    filhos = len(re.findall(r'\b(filho|filhos|tem filhos)\b', lower))
-    sem_filhos = len(re.findall(r'\b(sem filhos|não tem filhos|nao tem filhos|não possui filhos|nao possui filhos)\b', lower))
+    masculino = len(re.findall(r'\\b(masculino|homem|advogado)\\b', lower))
+    feminino = len(re.findall(r'\\b(feminino|mulher|advogada)\\b', lower))
+    filhos = len(re.findall(r'\\b(filho|filhos|tem filhos)\\b', lower))
+    sem_filhos = len(re.findall(r'\\b(sem filhos|não tem filhos|nao tem filhos|não possui filhos|nao possui filhos)\\b', lower))
     return masculino, feminino, filhos, sem_filhos
+
 
 def analyze(text):
     profiles = split_profiles(text)
@@ -117,6 +122,7 @@ def analyze(text):
             rows.append({"gender": "Desconhecido", "children": "Não", "raw": "agregado"})
     return pd.DataFrame(rows)
 
+
 if st.button("Processar arquivo"):
     if not os.path.exists(pdf_path):
         st.error("Arquivo não encontrado. Verifique o caminho e tente novamente.")
@@ -127,7 +133,7 @@ if st.button("Processar arquivo"):
                 "Ex.: pip install pdfplumber PyPDF2"
             )
         else:
-            with st.spinner("Extraindo texto do PDF..."):
+            with st.spinner("Extraindo texto do PDF..."): 
                 text = extract_text_from_pdf(pdf_path)
             if not text.strip():
                 st.error(
