@@ -2,20 +2,29 @@ import re
 import streamlit as st
 import matplotlib.pyplot as plt
 
-# Try to import a PDF reader library and show a clear error if missing
+# Try to import a PDF reader library; if missing show a friendly Streamlit error instead of raising
+PDFReader = None
+_import_error_msg = (
+    "PyPDF2 (or pypdf) is not installed in this environment.\n\n"
+    "Install it in the same Python environment used to run Streamlit:\n\n"
+    "  /home/adminuser/venv/bin/python -m pip install pypdf\n\n"
+    "or (general):\n\n"
+    "  python -m pip install pypdf\n\n"
+    "After installing, restart the Streamlit process (streamlit run perfil.py)."
+)
 try:
-    from PyPDF2 import PdfReader as PDFReader
+    from PyPDF2 import PdfReader as PDFReader  # try common name
 except Exception:
     try:
-        from pypdf import PdfReader as PDFReader
+        from pypdf import PdfReader as PDFReader  # maintained fork
     except Exception:
-        raise ImportError(
-            "PyPDF2 (or pypdf) is not installed in this environment. "
-            "Install it with: python -m pip install PyPDF2  "
-            "or: python -m pip install pypdf"
-        )
+        PDFReader = None
 
 st.title('Perfil dos Advogados')
+
+if PDFReader is None:
+    st.error(_import_error_msg)
+    st.stop()
 
 pdf_file = st.file_uploader("Faça upload do arquivo PDF (página 34 será lida)", type=["pdf"])
 
@@ -59,5 +68,4 @@ if pdf_file is not None:
                 ax.text(i, v + (max(values) * 0.01 if max(values) > 0 else 0.1), str(v), ha='center')
             st.pyplot(fig)
 else:
-    st.info("Faça o upload do arquivo PDF para ver o gráfico.")
     st.info("Faça o upload do arquivo PDF para ver o gráfico.")
