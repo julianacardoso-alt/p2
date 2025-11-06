@@ -1,5 +1,5 @@
 import re
-import PyPDF2
+import perfil1.pdf
 import streamlit as st
 import matplotlib.pyplot as plt
 
