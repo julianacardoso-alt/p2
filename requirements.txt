@@ -2,4 +2,3 @@ pandas
 streamlit
 pypdf
 matplotlib
-pip install PyPDF2 streamlit pandas altair
